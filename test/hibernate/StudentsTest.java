@@ -5,8 +5,12 @@ package hibernate;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.zip.InflaterInputStream;
 
@@ -76,4 +80,22 @@ public class StudentsTest {
 	    s.setPicture(image);
 		session.save(s);
 }
+	@Test
+	public void TestReadBlob() throws Exception{ //从数据库中读出保存进去的image
+		Students s=(Students) session.get(Students.class, 0);//主键是0,主键要与数据库里面相对应
+		//获得blob对象
+		Blob image=s.getPicture();
+		//获得照片的输入流
+		InputStream input=image.getBinaryStream();
+		//获得输出流
+		File f=new File("d:"+File.separator+"success.png");
+		// 获得输出流
+		OutputStream output=new FileOutputStream(f);
+		byte buff[]=new byte[input.available()];
+		input.read(buff);
+		output.write(buff);
+		input.close();
+		output.close();
+		
+	}
 }

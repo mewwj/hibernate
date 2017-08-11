@@ -1,11 +1,17 @@
 package hibernate;
 
+import java.sql.Blob;
 import java.util.Date;
+
+
+
+
 
 public class Students {
 	   private int sid;
 	   private String name;
 	   private Date biirthday;
+	   private Blob picture;
 	   
 	   public Students(){
 		   
@@ -33,6 +39,13 @@ public class Students {
 	}
 	public void setBiirthday(Date biirthday) {
 		this.biirthday = biirthday;
+	}
+	
+	public Blob getPicture() {
+		return picture;
+	}
+	public void setPicture(Blob picture) {
+		this.picture = picture;
 	}
 	@Override
 	public String toString() {

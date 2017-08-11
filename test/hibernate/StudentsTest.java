@@ -2,10 +2,17 @@ package hibernate;
 
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.util.Date;
+import java.util.zip.InflaterInputStream;
 
+import javax.imageio.stream.FileImageInputStream;
 
-
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -14,6 +21,8 @@ import org.hibernate.service.ServiceRegistryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+
 
 public class StudentsTest {
 	
@@ -46,10 +55,25 @@ public class StudentsTest {
 	
 	@Test
 	public void testSaveStudents(){
-		Students s=new Students(1,"孙悟空",new Date());
-		
+		Students s=new Students();
+		s.setBiirthday(new Date());
+		s.setName("孙悟空2");
 		session.save(s);
-	
 	}
-	
+	@Test
+	  public void TestSessionUseOpenSession() throws Exception{
+		Students s=new Students();
+		s.setBiirthday(new Date());
+		s.setName("孙悟空2");
+		//获得照片文件。
+		File f=new File("D:"+File.separator+"test.png");
+		//获得照片文件的输入流
+	    InputStream input=new FileInputStream(f);
+	    //创建一个Blob对象
+	           Blob image=Hibernate.getLobCreator(session).createBlob(input,input.available());
+	    // Blob  image =Hibernate.getLobCreator(session).createBlob(input,input.available());
+		//设置照片属性
+	    s.setPicture(image);
+		session.save(s);
+}
 }

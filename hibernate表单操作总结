@@ -1,0 +1,157 @@
+增：sava
+删：delete
+改：update
+查：get/load（查询单个记录）
+1.保存测试代码：
+[java] view plain copy
+@Test  
+    public void testSaveStudents(){//保存学生用例对象  
+        //生成地址对象  
+        Address address=new Address("710024","15319728***","西安市");  
+        //生成学生对象  
+        Students s1=new Students(1,"张奇","男",new Date(),address);  
+        session.save(s1);//保存对象进入数据库，无须写sql语句  
+    }  
+
+执行结果：
+
+
+
+
+
+2.测试get/load  查询
+[java] view plain copy
+@Test  
+        public void testGetStudents(){  
+            Students s=(Students) session.get(Students.class,1);  
+            System.out.println(s);  
+        }  
+
+测试结果（控制台输出）：
+
+
+Students [sid=1, sname=张奇, gender=男, birthday=2015-06-25 14:50:37.0, address=Address [postcode=710024, phone=15319728***, address=西安市]]
+
+
+
+
+
+ 测试load：
+[java] view plain copy
+@Test  
+        public void testLoadStudents(){  
+            Students s=(Students) session.load(Students.class,1);  
+            System.out.println(s);  
+        }  
+
+测试结果：
+Students [sid=1, sname=张奇, gender=男, birthday=2015-06-25 14:50:37.0, address=Address [postcode=710024, phone=15319728***, address=西安市]]
+3.测试修改 update
+[java] view plain copy
+@Test  
+        public void testUpdateStudents(){  
+            Students s=(Students) session.load(Students.class,1);  
+            s.setBirthday(new Date());  
+            session.update(s);  
+        }  
+
+测试结果：
+这个是控制台发布的update语句
+
+然后再去数据库瞅瞅：
+
+我们发现时间已经变了。说明更新成功！
+4.删除delete：
+测试代码：
+[java] view plain copy
+@Test  
+        public void testDeleteStudents(){  
+            Students s=(Students) session.load(Students.class,1);  
+            session.delete(s);  
+        }  
+
+测试结果：
+先是控制台：
+
+
+然后再看数据库：
+
+发现已经空了。说明删除成功！
+
+附件：
+本案例中：
+hibernate.cfg.xml数据库关联文件的配置如下：
+[java] view plain copy
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE hibernate-configuration PUBLIC  
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"  
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">  
+<hibernate-configuration>  
+    <session-factory>  
+    <property name="connection.username">wonderq</property>  
+    <property name="connection.password">root</property>  
+    <property name="connection.driver_class">com.mysql.jdbc.Driver</property>  
+    <property name="connection.url">jdbc:mysql:///hibernate?useUnicode=true&characterEncoding=UTF-8</property>  
+    <property name="dialect">org.hibernate.dialect.MySQLDialect</property>  
+    <property name="show_sql">true</property>  
+    <property name="format_sql">true</property>  
+    <property name="hbm2ddl.auto">update</property>  
+    <property name="hibernate.current_session_context_class">thread</property>  
+    <mapping  resource="Students.hbm.xml"/>  
+    <mapping  resource="Address.hbm.xml"/>  
+    </session-factory>  
+</hibernate-configuration>  
+
+
+
+students.hbm.xml学生表单映射文件配置如下：
+[java] view plain copy
+<?xml version="1.0"?>  
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"  
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">  
+<!-- Generated 2015-6-25 12:43:02 by Hibernate Tools 3.4.0.CR1 -->  
+<hibernate-mapping>  
+    <class name="Entity.Students" table="STUDENTS">  
+        <id name="sid" type="int">  
+            <column name="SID" />  
+            <generator class="assigned" />  
+        </id>  
+        <property name="sname" type="java.lang.String">  
+            <column name="SNAME" />  
+        </property>  
+        <property name="gender" type="java.lang.String">  
+            <column name="GENDER" />  
+        </property>  
+        <property name="birthday" type="java.util.Date">  
+            <column name="BIRTHDAY" />  
+        </property>  
+             <component name="address" class="Entity.Address">  
+            <property    name="postcode"  column="POSTCODE"/>  
+            <property    name="phone"  column="PHONE"/>  
+            <property    name="address"  column="ADDRESS"/>  
+        </component>  
+    </class>  
+</hibernate-mapping>  
+
+
+
+地址类表单映射文件配置如下：
+[java] view plain copy
+<?xml version="1.0"?>  
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"  
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">  
+<!-- Generated 2015-6-25 12:43:02 by Hibernate Tools 3.4.0.CR1 -->  
+<hibernate-mapping>  
+    <class name="Entity.Address" table="ADDRESS">  
+        <id name="postcode" type="java.lang.String">  
+            <column name="POSTCODE" />  
+            <generator class="assigned" />  
+        </id>  
+        <property name="phone" type="java.lang.String">  
+            <column name="PHONE" />  
+        </property>  
+        <property name="address" type="java.lang.String">  
+            <column name="ADDRESS" />  
+        </property>  
+    </class>  
+</hibernate-mapping>  
